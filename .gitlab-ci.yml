@@ -1,0 +1,3 @@
+include:
+    - project: 'ecommerce-platform-awesome/dev-env'
+      file: '/Perl-Module.gitlab-ci.yml'

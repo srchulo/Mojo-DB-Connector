@@ -1,0 +1,8 @@
+[PerlTidy]
+select = {lib,script,t}/**/*.{pl,pm,t,lib}
+
+[PerlCritic]
+select = {lib,script,t}/**/*.{pl,pm,t,lib}
+
+[PodTidy]
+select = {lib,script,t}/**/*.{pl,pm,t,lib,pod}
