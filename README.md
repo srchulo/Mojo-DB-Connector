@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.com/srchulo/Mojo-DB-Connector.svg?branch=master)](https://travis-ci.com/srchulo/Mojo-DB-Connector) [![Coverage Status](https://img.shields.io/coveralls/srchulo/Mojo-DB-Connector/master.svg?style=flat)](https://coveralls.io/r/srchulo/Mojo-DB-Connector?branch=master)
 # NAME
 
 [Mojo::DB::Connector](https://metacpan.org/pod/Mojo::DB::Connector) - Create and cache DB connections using common connection info
