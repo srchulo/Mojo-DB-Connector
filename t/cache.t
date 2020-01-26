@@ -1,6 +1,7 @@
 use Mojo::Base -strict;
 use Test::More;
 use Mojo::DB::Connector;
+use Mojo::URL;
 use Mojo::Util 'sha1_sum';
 
 plan skip_all => q{TEST_MYSQL=mysql://root@/test or TEST_POSTGRESQL=postgresql://root@/test}
@@ -31,6 +32,7 @@ sub test_cache {
     isnt $cached_one, $new_two, 'second connection not returned';
 
     note 'Test that userinfo is cached with sha1_sum';
+    my $url = Mojo::URL->new($connection_string);
     is $connector->cache->get($url->clone->userinfo(sha1_sum($url->userinfo))->to_unsafe_string), $cached_one, 'userinfo is cached with sha1_sum';
     is $connector->cache->get($url->to_unsafe_string), undef, 'userinfo is not cached in plaintext';
 
