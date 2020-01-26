@@ -31,6 +31,10 @@ __END__
 
 =encoding utf-8
 
+=head1 STATUS
+
+=for html <a href="https://travis-ci.org/srchulo/Mojo-DB-Connector"><img src="https://travis-ci.org/srchulo/Mojo-DB-Connector.svg?branch=master"></a> <a href='https://coveralls.io/github/srchulo/Mojo-DB-Connector?branch=master'><img src='https://coveralls.io/repos/github/srchulo/Mojo-DB-Connector/badge.svg?branch=master' alt='Coverage Status' /></a>
+
 =head1 NAME
 
 L<Mojo::DB::Connector::Role::Cache> - Cache Mojo::DB::Connector connections

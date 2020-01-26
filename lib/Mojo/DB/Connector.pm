@@ -65,6 +65,10 @@ __END__
 
 L<Mojo::DB::Connector> - Create and cache DB connections using common connection info
 
+=head1 STATUS
+
+=for html <a href="https://travis-ci.org/srchulo/Mojo-DB-Connector"><img src="https://travis-ci.org/srchulo/Mojo-DB-Connector.svg?branch=master"></a> <a href='https://coveralls.io/github/srchulo/Mojo-DB-Connector?branch=master'><img src='https://coveralls.io/repos/github/srchulo/Mojo-DB-Connector/badge.svg?branch=master' alt='Coverage Status' /></a>
+
 =head1 SYNOPSIS
 
   use Mojo::DB::Connector;
@@ -207,7 +211,7 @@ L<Mojo::Pg>
 
 =head1 LICENSE
 
-This software is copyright (c) 2020 by Adam Hopkins.
+This software is copyright (c) 2020 by Adam Hopkins
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
