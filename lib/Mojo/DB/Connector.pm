@@ -2,11 +2,12 @@ package Mojo::DB::Connector;
 use Mojo::Base -base;
 use Mojo::URL;
 
-has scheme      => sub { $ENV{MOJO_DB_CONNECTOR_SCHEME} // 'postgresql' };
-has userinfo    => sub { $ENV{MOJO_DB_CONNECTOR_USERINFO} // ''};
-has host        => sub { $ENV{MOJO_DB_CONNECTOR_HOST} // 'localhost' };
-has port        => sub { $ENV{MOJO_DB_CONNECTOR_PORT} // '5432' };
-has strict_mode => sub { $ENV{MOJO_DB_CONNECTOR_STRICT_MODE} // 1 };
+has env_prefix  => sub { 'MOJO_DB_CONNECTOR_' };
+has scheme      => sub { $ENV{shift->env_prefix . 'SCHEME'} // 'postgresql' };
+has userinfo    => sub { $ENV{shift->env_prefix . 'USERINFO'} // ''};
+has host        => sub { $ENV{shift->env_prefix . 'HOST'} // 'localhost' };
+has port        => sub { $ENV{shift->env_prefix . 'PORT'} // '5432' };
+has strict_mode => sub { $ENV{shift->env_prefix . 'STRICT_MODE'} // 1 };
 
 has [qw(_required_mysql _required_pg)];
 
@@ -106,6 +107,45 @@ which easily allows you to set different environment variables in dev/prod.
 See L<Mojo::DB::Connector::Role::Cache> for the ability to cache connections.
 
 =head1 ATTRIBUTES
+
+=head2 env_prefix
+
+  my $connector = Mojo::DB::Connector->new(env_prefix => 'MOJO_DB_CONNECTOR_');
+
+  my $env_prefix = $connector->env_prefix;
+  $connector     = $connector->env_prefix('MOJO_DB_CONNECTOR_');
+
+The prefix that will be used for environment variables names when checking for default values.
+The prefix will go before:
+
+=over 4
+
+=item
+
+L<SCHEME|/scheme>
+
+=item
+
+L<USERINFO|/userinfo>
+
+=item
+
+L<HOST|/host>
+
+=item
+
+L<PORT|/port>
+
+=item
+
+L<STRICT_MODE|/strict_mode>
+
+=back
+
+L</env_prefix> allows you to use different L<Mojo::DB::Connector> objects to easily generate connections
+for different connection settings.
+
+Default is C<MOJO_DB_CONNECTOR_>.
 
 =head2 scheme
 

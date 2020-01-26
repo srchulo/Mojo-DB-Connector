@@ -2,6 +2,8 @@ Revision history for Perl extension Mojo-DB-Connector
 
 {{$NEXT}}
 
+    - Add env_prefix.
+
 0.01 2020-01-26T01:24:29Z
 
     - original version
