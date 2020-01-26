@@ -5,6 +5,8 @@ use Mojo::Util 'sha1_sum';
 
 plan skip_all => q{TEST_MYSQL=mysql://root@/test or TEST_POSTGRESQL=postgresql://root@/test}
     unless $ENV{TEST_MYSQL} or $ENV{TEST_POSTGRESQL};
+plan skip_all => 'missing Mojo::DB::Role::ResultsRoles'
+    unless eval { require Mojo::DB::Role::ResultsRoles; 1 };
 
 {
     package My::Test::ResultsRole1;

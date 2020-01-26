@@ -45,6 +45,7 @@ before_install:
 install:
     - cpanm -n Mojo::Pg
     - cpanm -n Mojo::mysql
+    - cpanm -n Mojo::DB::Role::ResultsRoles
     - cpanm -n Devel::Cover
     - cpanm --quiet --notest Devel::Cover::Report::Coveralls
     - cpanm --quiet --notest --installdeps .
