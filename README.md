@@ -15,28 +15,28 @@
     # use default connection info or use connection info
     # set in environment variables
     my $connector  = Mojo::DB::Connector->new;
-    my $connection = $connector->new_connection('my_database');
+    my $connection = $connector->new_connection;
     my $results    = $connection->db->query(...);
 
-    # pass connection info in
+    # pass connection info in (some defaults still used)
     my $connector  = Mojo::DB::Connector->new(host => 'batman.com', userinfo => 'sri:s3cret');
-    my $connection = $connector->new_connection('my_s3cret_database');
+    my $connection = $connector->new_connection(database => 'my_s3cret_database');
     my $results    = $connection->db->query(...);
 
     # cache connections using Mojo::DB::Connector::Role::Cache
     my $connector = Mojo::DB::Connector->new->with_roles('+Cache');
 
     # fresh connection the first time
-    my $connection = $connector->cached_connection('my_database');
+    my $connection = $connector->cached_connection(database => 'my_database');
 
     # later somewhere else...
     # same connection (Mojo::mysql or Mojo::Pg object) as before
-    my $connection = $connector->cached_connection('my_database');
+    my $connection = $connector->cached_connection(database => 'my_database');
 
 # DESCRIPTION
 
 [Mojo::DB::Connector](https://metacpan.org/pod/Mojo::DB::Connector) is a thin wrapper around [Mojo::mysql](https://metacpan.org/pod/Mojo::mysql) and [Mojo::Pg](https://metacpan.org/pod/Mojo::Pg) that is
-useful when you want to connect to different databases on the same server using the same
+useful when you want to connect to different databases using slightly different
 connection info. It also allows you to easily connect using different settings in
 different environments by using environment variables to connect (see ["ATTRIBUTES"](#attributes)).
 This can be useful when developing using something like [Docker](https://www.docker.com/),
@@ -60,6 +60,9 @@ The prefix will go before:
 - [USERINFO](#userinfo)
 - [HOST](#host)
 - [PORT](#port)
+- [DATABASE](#database)
+- [OPTIONS](#options)
+- [URL](#url)
 - [STRICT\_MODE](#strict_mode)
 
 ["env\_prefix"](#env_prefix) allows you to use different [Mojo::DB::Connector](https://metacpan.org/pod/Mojo::DB::Connector) objects to easily generate connections
@@ -77,9 +80,10 @@ Allowed values are [mariadb](https://metacpan.org/pod/DBD::MariaDB), [mysql](htt
 will determine whether a [Mojo::mysql](https://metacpan.org/pod/Mojo::mysql) or [Mojo::Pg](https://metacpan.org/pod/Mojo::Pg) instance is returned. `mariadb` and `mysql`
 indicate [Mojo::mysql](https://metacpan.org/pod/Mojo::mysql), and `postgresql` indicates [Mojo::Pg](https://metacpan.org/pod/Mojo::Pg).
 
-This can also be set with the environment variable `MOJO_DB_CONNECTOR_SCHEME`.
+This can also be derived from ["scheme" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#scheme) via ["url"](#url) or set with the environment variable `MOJO_DB_CONNECTOR_SCHEME`.
 
-Default is `$ENV{MOJO_DB_CONNECTOR_SCHEME}` and falls back to `postgresql`.
+Default is first derived from ["scheme" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#scheme) via `$ENV{MOJO_DB_CONNECTOR_URL}`,
+then `$ENV{MOJO_DB_CONNECTOR_SCHEME}`, and then falls back to `postgresql`.
 
 ## userinfo
 
@@ -88,9 +92,10 @@ Default is `$ENV{MOJO_DB_CONNECTOR_SCHEME}` and falls back to `postgresql`.
 
 The ["userinfo" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#userinfo) that will be used for generating the connection URL.
 
-This can also be set with the environment variable `MOJO_DB_CONNECTOR_USERINFO`.
+This can also be derived from ["userinfo" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#userinfo) via ["url"](#url) or set with the environment variable `MOJO_DB_CONNECTOR_USERINFO`.
 
-Default is `$ENV{MOJO_DB_CONNECTOR_USERINFO}` and falls back to no `userinfo` (empty string).
+Default is first derived from ["userinfo" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#userinfo) via `$ENV{MOJO_DB_CONNECTOR_URL}`,
+then `$ENV{MOJO_DB_CONNECTOR_USERINFO}`, and then falls back to no `userinfo` (empty string).
 
 ## host
 
@@ -99,9 +104,10 @@ Default is `$ENV{MOJO_DB_CONNECTOR_USERINFO}` and falls back to no `userinfo` (e
 
 The ["host" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#host) that will be used for generating the connection URL.
 
-This can also be set with the environment variable `MOJO_DB_CONNECTOR_HOST`.
+This can also be derived from ["host" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#host) via ["url"](#url) or set with the environment variable `MOJO_DB_CONNECTOR_HOST`.
 
-Default is `$ENV{MOJO_DB_CONNECTOR_HOST}` and falls back to `localhost`.
+Default is first derived from ["host" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#host) via `$ENV{MOJO_DB_CONNECTOR_URL}`,
+then `$ENV{MOJO_DB_CONNECTOR_HOST}`, and then falls back to `localhost`.
 
 ## port
 
@@ -110,9 +116,56 @@ Default is `$ENV{MOJO_DB_CONNECTOR_HOST}` and falls back to `localhost`.
 
 The ["port" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#port) that will be used for generating the connection URL.
 
-This can also be set with the environment variable `MOJO_DB_CONNECTOR_PORT`.
+This can also be derived from ["port" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#port) via ["url"](#url) or set with the environment variable `MOJO_DB_CONNECTOR_PORT`.
 
-Default is `$ENV{MOJO_DB_CONNECTOR_PORT}` and falls back to `5432`.
+Default is first derived from ["port" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#port) via `$ENV{MOJO_DB_CONNECTOR_URL}`,
+then `$ENV{MOJO_DB_CONNECTOR_PORT}`, and then falls back to `5432`.
+
+## database
+
+    my $database = $connector->database;
+    $connector   = $connector->database('my_database');
+
+The database that will be used for generating the connection URL. This will be used
+as ["path" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#path).
+
+This can also be derived from ["path" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#path) via ["url"](#url) or set with the environment variable `MOJO_DB_CONNECTOR_DATABASE`.
+
+Default is first derived from ["path" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#path) via `$ENV{MOJO_DB_CONNECTOR_URL}`,
+then `$ENV{MOJO_DB_CONNECTOR_DATABASE}`, and then falls back to no `database` (empty string).
+
+## options
+
+    my $options = $connector->options;
+    $connector  = $connector->options([PrintError => 1, RaiseError => 0]);
+
+    # hashref also accepted
+    $connector  = $connector->options({PrintError => 1, RaiseError => 0});
+
+The options that will be used as the parameters ([Mojo::Parameters](https://metacpan.org/pod/Mojo::Parameters)) for generating the connection URL. This will be used
+as ["query" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#query). This accepts any valid input for ["query" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#query) except a list.
+
+This can also be derived from ["query" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#query) via ["url"](#url) or set with the environment variable `MOJO_DB_CONNECTOR_OPTIONS`.
+
+When set with the environment variable `MOJO_DB_CONNECTOR_OPTIONS`, ["options"](#options) must be specified in
+valid URL parameter syntax:
+
+    $ENV{MOJO_DB_CONNECTOR_OPTIONS} = 'PrintError=1&RaiseError=0';
+
+Default is first derived from ["query" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#query) via `$ENV{MOJO_DB_CONNECTOR_URL}`,
+then `$ENV{MOJO_DB_CONNECTOR_OPTIONS}`, and then falls back to `[]` (no options).
+
+## url
+
+    my $url    = $connector->url;
+    $connector = $connector->url('postgres://sri:s3cret@localhost/db3?PrintError=1&RaiseError=0');
+
+The connection URL from which all other attributes can be derived (except ["strict\_mode"](#strict_mode)).
+["url"](#url) must be specified before the first call to ["new\_connection"](#new_connection) is made, otherwise it will have no effect on setting the defaults.
+
+This can also be set with the environment variable `MOJO_DB_CONNECTOR_URL`.
+
+Default is `$ENV{MOJO_DB_CONNECTOR_URL}` and then falls back to `undef` (no URL).
 
 ## strict\_mode
 
@@ -132,18 +185,38 @@ Default is `$ENV{MOJO_DB_CONNECTOR_STRICT_MODE}` and falls back to `1`
 
 ## new\_connection
 
-    my $connection = $connector->new_connection('my_database');
+    # use environment variables or defaults
+    my $connection = $connector->new_connection;
     my $results    = $connection->db->query(...);
 
-    # use options
-    my $connection = $connector->new_connection('my_database', PrintError => 1, RaiseError => 0);
+    # provide attribute overrides just for this call
+    my $connection = $connector->new_connection(database => 'my_database', host => 'batman.com');
     my $results    = $connection->db->query(...);
 
 ["new\_connection"](#new_connection) creates a new connection ([Mojo::mysql](https://metacpan.org/pod/Mojo::mysql) or [Mojo::Pg](https://metacpan.org/pod/Mojo::Pg) instance) using
-the connection info in ["ATTRIBUTES"](#attributes).
+either the connection info in ["ATTRIBUTES"](#attributes), or any override values passed.
 
-["new\_connection"](#new_connection) requires a database name, and accepts optional options to be passed as
-key/value pairs. See ["options" in Mojo::mysql](https://metacpan.org/pod/Mojo::mysql#options) or ["options" in Mojo::Pg](https://metacpan.org/pod/Mojo::Pg#options).
+Any override values that are passed will completely replace any values in ["ATTRIBUTES"](#attributes):
+
+    my $connection = $connector->new_connection(database => 'my_database', host => 'batman.com');
+    my $results    = $connection->db->query(...);
+
+Except for ["options"](#options). ["options"](#options) follows the same format as ["query" in Mojo::URL](https://metacpan.org/pod/Mojo::URL#query):
+
+    # merge with existing options in attribute options by using a hashref
+    my $connection = $connector->new_connection(options => {merge => 'to'});
+
+    # append to existing options in attribute options by using an arrayref
+    my $connection = $connector->new_connection(options => [append => 'with']);
+
+    # replace existing options completely by passing replace_options => 1
+    # must provide an arrayref for replace_options
+    my $connection = $connector->new_connection(options => [append => 'with'], replace_options => 1);
+
+`replace_options` is needed because you cannot pass a list for the `options` value. If `replace_options`
+is provided, the `options` parameter must be an arrayref.
+
+See ["options" in Mojo::mysql](https://metacpan.org/pod/Mojo::mysql#options) or ["options" in Mojo::Pg](https://metacpan.org/pod/Mojo::Pg#options).
 
 # SEE ALSO
 
