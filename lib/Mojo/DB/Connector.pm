@@ -80,7 +80,7 @@ L<Mojo::DB::Connector> - Create and cache DB connections using common connection
   my $connection = $connector->new_connection('my_s3cret_database');
   my $results    = $connection->db->query(...);
 
-  # cache connections using Mojo::DB::Connection::Role::Cache
+  # cache connections using Mojo::DB::Connector::Role::Cache
   my $connector = Mojo::DB::Connector->new->with_roles('+Cache');
 
   # fresh connection the first time
