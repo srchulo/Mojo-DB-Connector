@@ -7,19 +7,22 @@ use Mojo::Util ();
 has cache => sub { Mojo::Cache->new };
 
 sub cached_connection {
-    my ($self, $database) = (shift, shift);
+    my $self   = shift;
 
-    # sort options so cached urls are the same
-    my @sorted_options =
+    my %config   = $self->_config(@_);
+    my $mojo_url = $self->_to_url(%config);
+
+    # sort parameters so cached urls are the same
+    $mojo_url->query(
         unpairs
         sort { $a->[0] cmp $b->[0] or $a->[1] cmp $b->[1] }
-        pairs @_;
-    my $mojo_url = $self->_to_url($database, @sorted_options);
+        pairs @{ $mojo_url->query->pairs }
+    );
     my $cache_url = $mojo_url->userinfo(Mojo::Util::sha1_sum($mojo_url->userinfo // ''))->to_unsafe_string;
 
     my $connection;
     unless ($connection = $self->cache->get($cache_url)) {
-        $connection = $self->new_connection($database, @sorted_options);
+        $connection = $self->new_connection(@_);
         $self->cache->set($cache_url => $connection);
     }
 
@@ -46,18 +49,18 @@ L<Mojo::DB::Connector::Role::Cache> - Cache Mojo::DB::Connector connections
   my $connector = Mojo::DB::Connector->new->with_roles('+Cache');
 
   # fresh connection the first time
-  my $connection = $connector->cached_connection('my_database');
+  my $connection = $connector->cached_connection(database => 'my_database');
 
   # later somewhere else...
   # same connection (Mojo::mysql or Mojo::Pg object) as before
-  my $connection = $connector->cached_connection('my_database');
+  my $connection = $connector->cached_connection(database => 'my_database');
 
   # caching works with options
-  my $connection = $connector->cached_connection('my_database', PrintError => 1, RaiseError => 0);
+  my $connection = $connector->cached_connection(database => 'my_database', options => [PrintError => 1, RaiseError => 0]);
 
   # same connection as above, because options are sorted by key then value
   # before being used in the cache URL key as parameters
-  my $connection = $connector->cached_connection('my_database', RaiseError => 0, PrintError => 1);
+  my $connection = $connector->cached_connection(database => 'my_database', options => [RaiseError => 0, PrintError => 1]);
 
 =head1 DESCRIPTION
 
@@ -71,11 +74,11 @@ And if this connection URL is seen again, the same connection object (L<Mojo::my
 This caching even works with C<options> (L<Mojo::mysql/options>, L<Mojo::Pg/options>) because the C<options> are sorted
 by key and then value before generating the URL:
 
-  my $connection = $connector->cached_connection('my_database', RaiseError => 0, PrintError => 1);
+  my $connection = $connector->cached_connection(database => 'my_database', options => [RaiseError => 0, PrintError => 1]);
 
   # the cache key for the above connection
   # note that RaiseError and PrintError have switched their order
-  mysql://batman:s3cret@localhost/db3?PrintError=1&RaiseError=0
+  mysql://batman:s3cret@localhost/my_database?PrintError=1&RaiseError=0
 
 =head1 ATTRIBUTES
 
@@ -94,23 +97,23 @@ By default it will cache 100 connections based on the default of L<Mojo::Cache/m
 
 =head2 cached_connection
 
-  my $connection = $connector->cached_connection('my_database');
+  my $connection = $connector->cached_connection(database => 'my_database');
 
   # works with options because options are sorted by key then value
   # before being used in the cache URL key as parameters
-  my $connection = $connector->cached_connection('my_database', RaiseError => 0, PrintError => 1);
+  my $connection = $connector->cached_connection(database => 'my_database', options => [RaiseError => 0, PrintError => 1]);
 
 L</cached_connection> will return a cached connection if one is available, or generate and cache a new connection
 to return. The cache key is a stringified L<Mojo::URL> (using L<Mojo::URL/to_unsafe_string>) that is based on the connection settings
 and options. For example, different databases will generate different connections:
 
-  my $connection       = $connector->cached_connection('my_database');
-  my $other_connection = $connector->cached_connection('my_other_database');
+  my $connection       = $connector->cached_connection(database => 'my_database');
+  my $other_connection = $connector->cached_connection(database => 'my_other_database');
 
 And so will different options:
 
-  my $connection       = $connector->cached_connection('my_database');
-  my $other_connection = $connector->cached_connection('my_database', RaiseError => 0);
+  my $connection       = $connector->cached_connection(database => 'my_database');
+  my $other_connection = $connector->cached_connection(database => 'my_database', options => [RaiseError => 0]);
 
 L</cached_connection> works with C<options> (L<Mojo::mysql/options>, L<Mojo::Pg/options>) because the C<options> are sorted
 by key and then value before generating the URL.
@@ -150,4 +153,3 @@ This library is free software; you can redistribute it and/or modify it under th
 Adam Hopkins E<lt>srchulo@cpan.orgE<gt>
 
 =cut
-

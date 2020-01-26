@@ -1,6 +1,11 @@
 Revision history for Perl extension Mojo-DB-Connector
 
 {{$NEXT}}
+    - Add database, options, and url attributes.
+    - Require named parameters to new_connection.
+    - Allow attributes to be overridden in new_connection.
+    - Allow attributes to be derived from a URL.
+    - Support appending, merging, and replacing options via Mojo::Parameters.
 
 0.02 2020-01-26T17:13:27Z
 
@@ -9,4 +14,3 @@ Revision history for Perl extension Mojo-DB-Connector
 0.01 2020-01-26T01:24:29Z
 
     - original version
-
