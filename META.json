@@ -1,12 +1,12 @@
 {
-   "abstract" : "It's new $module",
+   "abstract" : "Create and cache DB connections using common connection info",
    "author" : [
       "Adam Hopkins"
    ],
    "dynamic_config" : 0,
    "generated_by" : "Minilla/v3.1.8, CPAN::Meta::Converter version 2.150010",
    "license" : [
-      "restricted"
+      "perl_5"
    ],
    "meta-spec" : {
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
@@ -41,28 +41,42 @@
          }
       },
       "runtime" : {
+         "recommends" : {
+            "Mojo::DB::Role::ResultsRoles" : "0",
+            "Mojo::Pg" : "0",
+            "Mojo::mysql" : "0"
+         },
          "requires" : {
+            "Class::Method::Modifiers" : "0",
+            "List::Util" : "0",
             "Mojolicious" : "0",
+            "Role::Tiny" : "2.000001",
             "perl" : "v5.30.0"
          }
       },
       "test" : {
          "requires" : {
-            "Code::TidyAll" : "0",
-            "Perl::Critic" : "0",
-            "Perl::Tidy" : "0",
-            "Pod::Tidy" : "0",
-            "Test::CPAN::Meta" : "0",
-            "Test::MinimumVersion::Fast" : "0.04",
-            "Test::More" : "0.98",
-            "Test::Pod" : "0",
-            "Test::Pod::Coverage" : "0",
-            "Test::Spellunker" : "0"
+            "Test::Exception" : "0",
+            "Test::More" : "0.98"
          }
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/srchulo/Mojo-DB-Connector/issues"
+      },
+      "homepage" : "https://github.com/srchulo/Mojo-DB-Connector",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/srchulo/Mojo-DB-Connector.git",
+         "web" : "https://github.com/srchulo/Mojo-DB-Connector"
+      }
+   },
    "version" : "0.01",
+   "x_contributors" : [
+      "srchulo <violapiratejunky@gmail.com>"
+   ],
    "x_serialization_backend" : "JSON::PP version 4.02",
    "x_static_install" : 1
 }
