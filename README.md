@@ -46,6 +46,27 @@ See [Mojo::DB::Connector::Role::Cache](https://metacpan.org/pod/Mojo::DB::Connec
 
 # ATTRIBUTES
 
+## env\_prefix
+
+    my $connector = Mojo::DB::Connector->new(env_prefix => 'MOJO_DB_CONNECTOR_');
+
+    my $env_prefix = $connector->env_prefix;
+    $connector     = $connector->env_prefix('MOJO_DB_CONNECTOR_');
+
+The prefix that will be used for environment variables names when checking for default values.
+The prefix will go before:
+
+- [SCHEME](#scheme)
+- [USERINFO](#userinfo)
+- [HOST](#host)
+- [PORT](#port)
+- [STRICT\_MODE](#strict_mode)
+
+["env\_prefix"](#env_prefix) allows you to use different [Mojo::DB::Connector](https://metacpan.org/pod/Mojo::DB::Connector) objects to easily generate connections
+for different connection settings.
+
+Default is `MOJO_DB_CONNECTOR_`.
+
 ## scheme
 
     my $scheme = $connector->scheme;

@@ -11,7 +11,7 @@ has strict_mode => sub { $ENV{shift->env_prefix . 'STRICT_MODE'} // 1 };
 
 has [qw(_required_mysql _required_pg)];
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub new_connection {
     my ($self, $database, @options) = @_;
