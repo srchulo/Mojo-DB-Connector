@@ -51,7 +51,7 @@
             "List::Util" : "0",
             "Mojolicious" : "0",
             "Role::Tiny" : "2.000001",
-            "perl" : "v5.30.0"
+            "perl" : "5.010001"
          }
       },
       "test" : {
