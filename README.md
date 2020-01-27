@@ -42,6 +42,13 @@ different environments by using environment variables to connect (see ["ATTRIBUT
 This can be useful when developing using something like [Docker](https://www.docker.com/),
 which easily allows you to set different environment variables in dev/prod.
 
+[Mojo::DB::Connector](https://metacpan.org/pod/Mojo::DB::Connector) is a shell class that just composes [Mojo::DB::Connector::Base](https://metacpan.org/pod/Mojo::DB::Connector::Base):
+
+    with 'Mojo::DB::Connector::Base';
+
+You may use [Mojo::DB::Connector::Base](https://metacpan.org/pod/Mojo::DB::Connector::Base) as a starting point for your own DB Connectors,
+if needed.
+
 See [Mojo::DB::Connector::Role::Cache](https://metacpan.org/pod/Mojo::DB::Connector::Role::Cache) for the ability to cache connections.
 
 # ATTRIBUTES
@@ -220,6 +227,7 @@ See ["options" in Mojo::mysql](https://metacpan.org/pod/Mojo::mysql#options) or 
 
 # SEE ALSO
 
+- [Mojo::DB::Connector::Base](https://metacpan.org/pod/Mojo::DB::Connector::Base)
 - [Mojo::DB::Connector::Role::Cache](https://metacpan.org/pod/Mojo::DB::Connector::Role::Cache)
 - [Mojo::DB::Connector::Role::ResultsRoles](https://metacpan.org/pod/Mojo::DB::Connector::Role::ResultsRoles)
 
