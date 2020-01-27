@@ -1,6 +1,8 @@
 Revision history for Perl extension Mojo-DB-Connector
 
 {{$NEXT}}
+
+0.05 2020-01-27T21:42:27Z
     - Return database as a string when defaulting from URL path.
 
 0.04 2020-01-27T02:27:37Z
