@@ -28,8 +28,6 @@ has strict_mode => sub { $ENV{shift->env_prefix . 'STRICT_MODE'} // 1 };
 
 has [qw(_required_mysql _required_pg)];
 
-our $VERSION = '0.03';
-
 sub new_connection {
     my $self = shift;
     my %config = $self->_config(@_);
