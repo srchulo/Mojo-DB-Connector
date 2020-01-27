@@ -1,6 +1,7 @@
 Revision history for Perl extension Mojo-DB-Connector
 
 {{$NEXT}}
+    - Return database as a string when defaulting from URL path.
 
 0.04 2020-01-27T02:27:37Z
     - Add required methods to Mojo::DB::Connector::Role::Cache.

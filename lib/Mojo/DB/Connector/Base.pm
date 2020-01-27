@@ -8,7 +8,7 @@ has scheme      => sub { shift->_attr_default('scheme', 'SCHEME', 'postgresql') 
 has userinfo    => sub { shift->_attr_default('userinfo', 'USERINFO', '') };
 has host        => sub { shift->_attr_default('host', 'HOST', 'localhost') };
 has port        => sub { shift->_attr_default('port', 'PORT', '5432') };
-has database    => sub { shift->_attr_default('path', 'DATABASE', '') };
+has database    => sub { shift->_attr_default(sub { $_->path->to_string }, 'DATABASE', '') };
 has options     => sub {
     my $options = shift->_attr_default(sub { $_->query->pairs }, 'OPTIONS', '');
     return $options if ref $options;
