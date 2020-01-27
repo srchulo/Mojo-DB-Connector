@@ -4,11 +4,12 @@ use List::Util qw(pairs unpairs);
 use Mojo::Cache;
 use Mojo::Util ();
 
+requires qw(_config _to_url new_connection);
+
 has cache => sub { Mojo::Cache->new };
 
 sub cached_connection {
-    my $self   = shift;
-
+    my $self     = shift;
     my %config   = $self->_config(@_);
     my $mojo_url = $self->_to_url(%config);
 

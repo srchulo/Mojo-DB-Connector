@@ -1,106 +1,8 @@
 package Mojo::DB::Connector;
 use Mojo::Base -base;
-use Mojo::Parameters;
-use Mojo::URL;
+use Role::Tiny::With ();
 
-has env_prefix  => sub { 'MOJO_DB_CONNECTOR_' };
-has scheme      => sub { shift->_attr_default('scheme', 'SCHEME', 'postgresql') };
-has userinfo    => sub { shift->_attr_default('userinfo', 'USERINFO', '') };
-has host        => sub { shift->_attr_default('host', 'HOST', 'localhost') };
-has port        => sub { shift->_attr_default('port', 'PORT', '5432') };
-has database    => sub { shift->_attr_default('path', 'DATABASE', '') };
-has options     => sub {
-    my $options = shift->_attr_default(sub { $_->query->pairs }, 'OPTIONS', '');
-    return $options if ref $options;
-    return Mojo::Parameters->new($options)->pairs;
-};
-has url         => sub {
-    my $env_url = $ENV{shift->env_prefix . 'URL'};
-    return unless $env_url;
-
-    my $url = Mojo::URL->new($env_url);
-    # so database does not have a leading slash
-    $url->path->leading_slash(undef);
-
-    return $url;
-};
-has strict_mode => sub { $ENV{shift->env_prefix . 'STRICT_MODE'} // 1 };
-
-has [qw(_required_mysql _required_pg)];
-
-our $VERSION = '0.03';
-
-sub new_connection {
-    my $self = shift;
-    my %config = $self->_config(@_);
-
-    my ($package, $constructor);
-    my $scheme = $config{scheme};
-    if ($scheme eq 'mariadb' or $scheme eq 'mysql') {
-        $package = 'Mojo::mysql';
-        $constructor = $config{strict_mode} ? 'strict_mode' : 'new';
-
-        if (not $self->_required_mysql) {
-            eval { require Mojo::mysql; 1 } or Carp::croak "Failed to require Mojo::mysql $@";
-            $self->_required_mysql(1);
-        }
-    } elsif ($scheme eq 'postgresql') {
-        $package = 'Mojo::Pg';
-        $constructor = 'new';
-
-        if (not $self->_required_pg) {
-            eval { require Mojo::Pg; 1 } or Carp::croak "Failed to require Mojo::Pg $@";
-            $self->_required_pg(1);
-        }
-    } else {
-        Carp::croak "unknown scheme '$scheme'. Supported schemes are: mariadb, mysql, postgresql";
-    }
-
-    return $package->$constructor($self->_to_url(%config)->to_unsafe_string);
-}
-
-sub _to_url {
-    my ($self, %config) = @_;
-
-    my $url =
-        Mojo::URL->new
-                 ->scheme($config{scheme})
-                 ->userinfo($config{userinfo})
-                 ->host($config{host})
-                 ->port($config{port})
-                 ->path($config{database})
-                 ;
-    $url->query($self->options);
-
-    if ($config{options}) {
-        if ($config{replace_options}) {
-            $url->query(@{ $config{options} });
-        } else {
-            $url->query($config{options});
-        }
-    }
-
-    return $url;
-}
-
-sub _config {
-    my $self = shift;
-
-    return (
-        (map { $_ => $self->$_ } qw(scheme userinfo host port database strict_mode)),
-        @_,
-    );
-}
-
-sub _attr_default {
-    my ($self, $url_method, $env_suffix, $default) = @_;
-
-    if (my $url = $self->url) {
-        return ref $url_method ? $url_method->(local $_ = $url) : $url->$url_method;
-    }
-
-    return $ENV{$self->env_prefix . $env_suffix} // $default;
-}
+Role::Tiny::With::with 'Mojo::DB::Connector::Base';
 
 1;
 __END__
@@ -148,6 +50,13 @@ connection info. It also allows you to easily connect using different settings i
 different environments by using environment variables to connect (see L</ATTRIBUTES>).
 This can be useful when developing using something like L<Docker|https://www.docker.com/>,
 which easily allows you to set different environment variables in dev/prod.
+
+L<Mojo::DB::Connector> is a shell class that just composes L<Mojo::DB::Connector::Base>:
+
+  with 'Mojo::DB::Connector::Base';
+
+You may use L<Mojo::DB::Connector::Base> as a starting point for your own DB Connectors,
+if needed.
 
 See L<Mojo::DB::Connector::Role::Cache> for the ability to cache connections.
 
@@ -355,6 +264,10 @@ See L<Mojo::mysql/options> or L<Mojo::Pg/options>.
 =head1 SEE ALSO
 
 =over 4
+
+=item
+
+L<Mojo::DB::Connector::Base>
 
 =item
 

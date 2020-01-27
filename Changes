@@ -1,6 +1,8 @@
 Revision history for Perl extension Mojo-DB-Connector
 
 {{$NEXT}}
+    - Add required methods to Mojo::DB::Connector::Role::Cache.
+    - Add Mojo::DB::Connector::Base.
 
 0.03 2020-01-26T22:29:07Z
     - Add database, options, and url attributes.
