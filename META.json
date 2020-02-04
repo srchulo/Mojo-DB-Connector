@@ -49,7 +49,7 @@
          "requires" : {
             "Class::Method::Modifiers" : "0",
             "List::Util" : "0",
-            "Mojolicious" : "0",
+            "Mojolicious" : "7.55",
             "Role::Tiny" : "2.000001",
             "perl" : "5.010001"
          }
@@ -73,9 +73,9 @@
          "web" : "https://github.com/srchulo/Mojo-DB-Connector"
       }
    },
-   "version" : "0.05",
+   "version" : "0.06",
    "x_contributors" : [
-      "Adam Hopkins <violapiratejunky@gmail.com>"
+      "srchulo <violapiratejunky@gmail.com>"
    ],
    "x_serialization_backend" : "JSON::PP version 4.02",
    "x_static_install" : 1
