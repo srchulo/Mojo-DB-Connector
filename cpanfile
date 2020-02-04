@@ -1,6 +1,6 @@
 requires 'perl', '5.010001';
 
-requires 'Mojolicious';
+requires 'Mojolicious', '7.55';
 requires 'Class::Method::Modifiers';
 requires 'List::Util';
 requires 'Role::Tiny', '2.000001';
